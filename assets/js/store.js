@@ -76,7 +76,7 @@ window.FVS = (function () {
     const v = defVar(p), out = outAll(p), h = '#/products/' + encodeURIComponent(p.handle);
     const sub = p.box ? (L(v, 'serves') || L(p, 'sub')) : L(p, 'origin');
     return `<article class="pc${out ? ' pc--out' : ''}" style="--hue:${esc(hue(p))}"><div class="pc__media">
-      <a class="pc__well" href="${h}" data-zoom="${esc(pimg(p))}" data-z="2.5" aria-label="${esc(title(p))}">${halo()}<img class="prod" src="${esc(sm(pimg(p)))}" alt="${esc(title(p))}" loading="lazy" width="480" height="600"><span class="lens lens--live" aria-hidden="true"></span></a>
+      <a class="pc__well" href="${h}" aria-label="${esc(title(p))}">${halo()}<img class="prod" src="${esc(sm(pimg(p)))}" alt="${esc(title(p))}" loading="lazy" width="480" height="600"></a>
       ${badge(p)}
       <button class="pc__fav gf rim${N.wish.has(p.id) ? ' on' : ''}" data-fav="${esc(p.id)}" aria-label="${t('p.save')}">${ic('heart')}</button>
       ${out ? `<div class="notify gf rim"><span>${t('c.soldOut')}</span><button class="btn btn--dark btn--sm" data-notify="${esc(p.id)}">${t('p.notify')}</button></div>` : `<button class="pc__add gf rim" data-quick="${esc(p.id)}" aria-label="${t('p.addToBag')} — ${esc(title(p))}">+</button>`}</div>
@@ -91,30 +91,48 @@ window.FVS = (function () {
 
   /* ─────────────── home sections ─────────────── */
   const SEC = {};
-  let heroPid = null;
-  SEC.hero = s => {
-    const base = N.product(s.product) || inSeasonList()[0];
-    const p = N.product(heroPid) || base;
-    const dockList = [base].concat(inSeasonList().filter(x => x.id !== base.id)).slice(0, 4);
-    return `<section class="hero" data-hero="${esc(s.id)}" style="--hue:${esc(hue(p))}">${heroInner(s, p, base)}
-      <div class="hero__dock gf rim" role="tablist">${dockList.map(x => `<button class="${x.id === p.id ? 'on' : ''}" data-herop="${esc(x.id)}" aria-label="${esc(title(x))}"><img class="prod" src="${esc(sm(pimg(x)))}" alt=""></button>`).join('')}</div></section>`;
+  /* hero: auto slider — each slide is a product with its own headline */
+  let heroIdx = 0, heroTimer = 0;
+  const heroSlides = s => {
+    const list = (s.slides && s.slides.length ? s.slides : [Object.assign({ product: s.product }, s)]).filter(x => { const p = N.product(x.product); return p && p.status === 'active'; });
+    return list.length ? list : [Object.assign({}, s, { product: inSeasonList()[0].id })];
   };
-  function heroInner(s, p, base) {
-    const v = defVar(p), g = p.grade || {};
-    const kick = p === base && L(s, 'kicker') ? L(s, 'kicker') : `${title(p)} · ${L(p, 'origin')}`;
-    return `<div class="hero__img" id="heroImg">${halo()}<img class="prod" src="${esc(pimg(p))}" alt="${esc(title(p))}" width="1000" height="1250" fetchpriority="high"></div>
+  SEC.hero = s => {
+    const sl = heroSlides(s); if (heroIdx >= sl.length) heroIdx = 0;
+    const p = N.product(sl[heroIdx].product);
+    return `<section class="hero" data-hero="${esc(s.id)}" style="--hue:${esc(hue(p))};--hero-t:${(+s.interval || 6)}s"><div class="hero__in" id="heroIn">${heroInner(s, sl[heroIdx], p)}</div>
+      <div class="hero__dock gf rim" role="tablist">${sl.map((x, k) => { const q = N.product(x.product); return `<button class="${k === heroIdx ? 'on' : ''}" data-herok="${k}" role="tab" aria-selected="${k === heroIdx}" aria-label="${esc(title(q))}"><img class="prod" src="${esc(sm(pimg(q)))}" alt=""><i class="bar"></i></button>`; }).join('')}</div></section>`;
+  };
+  function heroInner(s, x, p) {
+    const v = defVar(p);
+    return `<div class="hero__img">${halo()}<img class="prod" src="${esc(pimg(p))}" alt="${esc(title(p))}" width="1000" height="1250"${heroIdx ? '' : ' fetchpriority="high"'}></div>
       <div class="wrap"><div class="hero__copy">
-        <span class="chip gf rim"><span class="dot"></span>${esc(kick)}</span>
-        <h1 class="h1" style="margin-top:22px">${esc(L(s, 'title'))}<span>${esc(L(s, 'title2'))}</span></h1>
-        <p class="lead">${esc(L(s, 'text'))}</p>
-        <div class="hero__cta"><a class="btn btn--dark" href="${esc(s.to || '#/shop')}">${esc(L(s, 'cta'))} ${ic('arrow').replace('class="i"', 'class="i flip"')}</a>${L(s, 'cta2') ? `<a class="btn btn--glass gf rim" href="${esc(s.to2 || '#/standard')}">${esc(L(s, 'cta2'))}</a>` : ''}</div>
+        <span class="chip gf rim"><span class="dot"></span>${esc(L(x, 'kicker') || title(p) + ' · ' + L(p, 'origin'))}</span>
+        <h1 class="h1" style="margin-top:22px">${esc(L(x, 'title'))}<span>${esc(L(x, 'title2'))}</span></h1>
+        <p class="lead">${esc(L(x, 'text') || L(p, 'desc'))}</p>
+        <div class="hero__cta"><a class="btn btn--dark" href="#/products/${esc(p.handle)}">${t('c.shopNow')} ${ic('arrow').replace('class="i"', 'class="i flip"')}</a><a class="btn btn--glass gf rim" href="${esc(s.to || '#/shop')}">${esc(L(s, 'cta') || t('l.shopAll'))}</a></div>
       </div></div>
-      <div class="lns lns--a gc rim"><small>${t('p.calibre')}</small><h4>${esc(L(g, 'calibre') || 'A+')}</h4><div class="kv"><span>${esc(L(p, 'origin'))}</span><b>${esc(g.label || 'A+')}</b></div></div>
+      <div class="lns lns--a gf rim"><small>${esc(L(p, 'origin'))}</small><h4>${esc(title(p))}</h4><p>${esc(L(p, 'sub'))}</p></div>
       <div class="lns lns--b gf rim" data-quickcard="${esc(p.id)}">
-        <small>${esc(title(p))}</small><h4>${esc(L(p, 'sub'))}</h4>
-        <div class="packs" data-packs="${esc(p.id)}">${p.variants.map(x => `<button class="${x.id === v.id ? 'on' : ''}" data-pack="${esc(x.id)}"${N.soldOut(p, x) ? ' disabled' : ''}>${esc(packName(x))}<small class="num">${money(N.priceOf(p, x))}</small></button>`).join('')}</div>
+        <small>${p.box ? t('c.tier') : t('c.pack')}</small>
+        <div class="packs" data-packs="${esc(p.id)}" style="margin-top:10px">${p.variants.map(y => `<button class="${y.id === v.id ? 'on' : ''}" data-pack="${esc(y.id)}"${N.soldOut(p, y) ? ' disabled' : ''}>${esc(packName(y))}<small class="num">${money(N.priceOf(p, y))}</small></button>`).join('')}</div>
         <div class="addrow"><button class="btn btn--dark" data-addsel="${esc(p.id)}">${t('p.addToBag')} · <span class="num" data-selprice>${money(N.priceOf(p, v))}</span></button></div>
       </div>`;
+  }
+  function heroGo(k) {
+    const sec = $('[data-hero]'); if (!sec) return;
+    const s = (C.home.sections || []).find(x => x.id === sec.dataset.hero); const sl = heroSlides(s);
+    heroIdx = (k + sl.length) % sl.length;
+    const p = N.product(sl[heroIdx].product), box = $('#heroIn');
+    box.classList.add('out');
+    setTimeout(() => { sec.style.setProperty('--hue', hue(p)); box.innerHTML = heroInner(s, sl[heroIdx], p); box.classList.remove('out'); $$('[data-herok]', sec).forEach((b, n) => { b.classList.toggle('on', n === heroIdx); b.setAttribute('aria-selected', n === heroIdx); }); }, 320);
+  }
+  function heroAuto() {
+    clearInterval(heroTimer);
+    const sec = $('[data-hero]'); if (!sec) return;
+    const s = (C.home.sections || []).find(x => x.id === sec.dataset.hero);
+    if (heroSlides(s).length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    heroTimer = setInterval(() => { if (!sec.matches(':hover') && !sec.contains(document.activeElement) && !document.hidden) heroGo(heroIdx + 1); }, (+s.interval || 6) * 1000);
   }
   /* trust: one solid forest strip under the hero */
   SEC.trust = s => `<section class="trustbar"><div class="wrap"><div class="trust">${(s.items || []).map(x => `<div>${ic(x.icon === 'wa' ? 'wa' : x.icon)}<span>${esc(LL(x))}</span></div>`).join('')}</div></div></section>`;
@@ -136,8 +154,8 @@ window.FVS = (function () {
   SEC.lens = s => {
     const p = N.product(s.product) || inSeasonList()[0], g = p.grade || {};
     return `<section class="sec clip"><div class="wrap"><div class="lensx">
-      <div class="stage-wrap">${halo('', hue(p))}<div class="lensx__stage" data-zoom="${esc(pimg(p))}" data-z="2.6" data-keep="1" style="aspect-ratio:4/5"><img class="prod" src="${esc(pimg(p))}" alt="${esc(title(p))}" loading="lazy"><span class="lens lens--live on" style="left:58%;top:46%;background-image:url('${esc(p.macro || pimg(p))}');background-size:cover;background-position:center" aria-hidden="true"></span><span class="chip gt lensx__hint">${ic('lens')} ${t('p.lensHint')}</span></div></div>
-      <div class="rv-in"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2" style="margin:12px 0 18px">${esc(L(s, 'title'))}</h2><p class="lead">${esc(L(s, 'text'))}</p>
+      <div class="stage-wrap">${halo('', hue(p))}<a class="lensx__stage" href="#/products/${esc(p.handle)}" style="aspect-ratio:4/5"><img class="prod" src="${esc(pimg(p))}" alt="${esc(title(p))}" loading="lazy"></a></div>
+      <div class="rv-in"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2" style="margin:12px 0 18px">${esc(L(s, 'title'))}</h2><p class="lead">${esc(L(s, 'text') || L(p, 'desc'))}</p>
         <div class="gradecard gf rim" style="margin-top:28px">
           <div class="top"><div><small>${t('p.grade')}</small><div class="big">${esc(g.label || 'A+')}</div></div><span class="chip gt">${esc(title(p))}</span></div>
 
@@ -169,7 +187,7 @@ window.FVS = (function () {
   };
   const STD_MACRO = ['strawberry', 'orange', 'tomato'];
   SEC.standard = s => `<section class="sec"><div class="wrap"><div class="sec__h rv-in"><div><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2">${esc(L(s, 'title'))}</h2></div><a class="btn btn--glass gf rim btn--sm" href="#/standard">${t('m.standard')}</a></div>
-    <div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp && mp.macro ? `<span class="lens" style="background-image:url('${esc(mp.macro)}')" aria-hidden="true"></span>` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>`;
+    <div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp ? `<img class="std__img prod" src="${esc(sm(pimg(mp)))}" alt="" loading="lazy">` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>`;
   SEC.band = s => `<section class="sec"><div class="wrap"><div class="band rv-in"><span class="halo" style="--hue:#AE9D57;right:-160px;top:-200px" aria-hidden="true"></span><div style="position:relative;z-index:2"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2">${esc(L(s, 'title'))}</h2><p>${esc(L(s, 'text'))}</p></div>
     <div class="gw"><span class="chip" style="background:rgba(255,255,255,.1);color:#fff"><span class="dot"></span>${t('m.hosting')}</span><a class="btn btn--olive" href="${esc(s.to || '#/hosting')}">${esc(L(s, 'cta'))}</a><a class="btn" style="background:rgba(255,255,255,.1);color:#fff" target="_blank" rel="noopener" href="${esc(N.wa(t('p.waMsg')))}">${ic('wa')} ${t('c.whatsapp')}</a></div></div></div></section>`;
   SEC.editorial = s => `<section class="sec"><div class="wrap"><div class="edit"><div class="edit__img rv-in">${s.image ? `<img class="prod" src="${esc(s.image)}" alt="" loading="lazy">` : ''}</div><div class="rv-in"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2" style="margin:12px 0 18px">${esc(L(s, 'title'))}</h2><p class="lead">${esc(L(s, 'text'))}</p>${L(s, 'cta') ? `<a class="btn btn--dark" style="margin-top:26px" href="${esc(s.to || '#/shop')}">${esc(L(s, 'cta'))}</a>` : ''}</div></div></div></section>`;
@@ -222,17 +240,17 @@ window.FVS = (function () {
     return `<div class="wrap"><nav class="crumbs" style="margin-top:22px"><a href="#/">${t('nav.home')}</a><span>/</span><a href="#/collections/${esc(col.handle)}">${esc(L(col, 'title'))}</a><span>/</span><span>${esc(title(p))}</span></nav>
       <div class="pdp" style="--hue:${esc(hue(p))}">
         <div class="pdp__gal">
-          <div class="pdp__stage" data-zoom="${esc(img)}" data-z="2.3">${halo()}<img class="prod" id="pdpImg" src="${esc(img)}" alt="${esc(title(p))}" width="1000" height="1250"><span class="lens lens--live" aria-hidden="true"></span>
+          <div class="pdp__stage">${halo()}<img class="prod" id="pdpImg" src="${esc(img)}" alt="${esc(title(p))}" width="1000" height="1250">
             <div class="tagrow">${badge(p).replace(' tag"', '"')}</div>
-            ${!p.box ? `<span class="chip gt hint">${ic('lens')} ${t('p.lensHint')}</span>` : ''}</div>
-          ${p.macro ? `<div class="pdp__thumbs"><button class="on" data-thumb="${esc(img)}"><img class="prod" src="${esc(sm(img))}" alt=""></button><button data-thumb="${esc(p.macro)}"><img src="${esc(p.macro)}" alt="${t('c.lens')}"></button></div>` : ''}
+          </div>
+
         </div>
         <div class="pdp__info">
           <span class="kick">${esc(L(p, 'origin'))} · ${esc(L(p, 'season'))}</span>
           <h1 class="h2">${esc(title(p))}</h1>
           <p class="pdp__sub">${esc(L(p, 'sub'))}</p>
           <div class="pdp__price"><b class="num" id="pdpPrice">${money(N.priceOf(p, sel))}</b>${p.compareAt && p.compareAt > p.price ? `<s class="num">${money(p.compareAt)}</s>` : ''}<small id="pdpPack">${esc(packName(sel))}</small></div>
-          ${reviews.length ? `<a href="#/products/${esc(p.handle)}" data-scroll="rvs" class="small muted" style="display:inline-flex;gap:8px;margin:-8px 0 18px"><span class="rstars">${'★'.repeat(Math.round(st.avg))}</span>${st.avg.toFixed(1)} · ${reviews.length === 1 ? t('rv.one') : t('rv.count', { n: reviews.length })}</a>` : ''}
+
           <span class="pdp__lbl">${p.box ? t('c.tier') : t('c.pack')}</span>
           <div class="packs" data-pdppacks>${p.variants.map(v => `<button class="${v.id === sel.id ? 'on' : ''}" data-pdpv="${esc(v.id)}"${N.soldOut(p, v) ? ' disabled' : ''}>${esc(packName(v))}<small class="num">${money(N.priceOf(p, v))}${p.box && L(v, 'serves') ? ' · ' + esc(L(v, 'serves')) : ''}</small></button>`).join('')}</div>
           ${stock !== Infinity && stock > 0 && stock <= 5 ? `<p class="small" style="color:var(--warn);font-weight:600;margin:12px 0 0">${t('p.lowStock', { n: stock })}</p>` : ''}
@@ -251,12 +269,8 @@ window.FVS = (function () {
           </div>
         </div>
       </div></div>
-      ${pairs.length ? `<section class="sec"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('p.pairs')}</span><h2 class="h2">${t('p.also')}</h2></div>${pairs.length > 4 ? railNav('r-pairs') : ''}</div>${rail(pairs, 'r-pairs')}</div></section>` : ''}
-      <section class="sec" id="rvs" style="padding-top:0"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('rv.title')}</span><h2 class="h2">${reviews.length ? st.avg.toFixed(1) + ' / 5' : t('rv.title')}</h2></div></div>
-        <div class="rv"><div class="rv__sum">${reviews.length ? `<div class="big">${st.avg.toFixed(1)}</div><div class="rstars">${'★'.repeat(Math.round(st.avg))}</div><p class="small muted">${reviews.length === 1 ? t('rv.one') : t('rv.count', { n: reviews.length })}</p>` : `<p class="muted" style="margin-top:0">${t('rv.first')}</p>`}
-          <form id="rvForm" novalidate><div class="stars-in">${[5, 4, 3, 2, 1].map(n => `<input type="radio" name="r" id="rs${n}" value="${n}"><label for="rs${n}" aria-label="${n}">★</label>`).join('')}</div>
-            <input class="inp" name="name" placeholder="${t('rv.name')}"><textarea class="inp" name="text" rows="3" placeholder="${t('rv.textPh')}"></textarea><input class="inp" name="phone" inputmode="tel" placeholder="${t('rv.phone')}"><p class="err" id="rvErr" hidden></p><button class="btn btn--dark">${t('rv.send')}</button></form></div>
-          <div class="rv__list">${reviews.map(r => `<div class="rv__i"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(r.name)}</b><span class="rstars">${'★'.repeat(Math.round(r.rating))}</span></div>${r.verified ? `<span class="stat" style="margin-top:6px">${ic('check')} ${t('rv.verified')}</span>` : ''}<p dir="auto">${esc(r.text)}</p></div>`).join('') || `<div class="empty" style="padding:30px">${ic('leaf')}<p>${t('rv.none')}</p></div>`}</div></div></div></section>
+      ${pairs.length ? `<section class="sec sec--more"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('p.pairs')}</span><h2 class="h2">${t('p.also')}</h2></div>${pairs.length > 4 ? railNav('r-pairs') : ''}</div>${rail(pairs, 'r-pairs')}</div></section>` : ''}
+      ${(() => { const more = (p.box ? N.inCollection('boxes').filter(x => x.id !== p.id) : N.inCollection('boxes')).slice(0, 4); return more.length ? `<section class="sec sec--more2"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('m.hosting')}</span><h2 class="h2">${N.isAr() ? 'كمّل السفرة' : 'Complete the table'}</h2></div><a class="btn btn--glass gf rim btn--sm" href="#/collections/boxes">${t('c.viewAll')}</a></div><div class="grid">${more.map(card).join('')}</div></div></section>` : ''; })()}
       <div class="buybar gf rim" id="buybar"><img class="prod" src="${esc(sm(img))}" alt=""><div class="t"><b>${esc(title(p))}</b><span class="num" data-bbprice>${money(N.priceOf(p, sel))} · ${esc(packName(sel))}</span></div>${out ? '' : `<button class="btn btn--dark btn--sm" data-pdpadd>${t('c.add')}</button>`}</div>`;
   }
   function pdpRefresh() {
@@ -309,7 +323,7 @@ window.FVS = (function () {
     return `<section class="ph" style="--hue:${esc(hp ? hue(hp) : '#E5383F')}">${halo()}${hp ? `<img class="ph__img prod" src="${esc(pimg(hp))}" alt="">` : ''}<div class="wrap"><nav class="crumbs"><a href="#/">${t('nav.home')}</a><span>/</span><span>${t('m.standard')}</span></nav>
         <span class="kick">Class A+</span><h1 class="h1" style="margin-top:16px;max-width:820px">${esc(L(s, 'title') || t('m.standard'))}</h1>
         <p class="lead" style="margin-top:22px">${N.isAr() ? 'A+ مش شعار — دي قايمة فحص. كل صنف بيتقاس ويتفحص ويتذاق قبل ما يخرج من المزرعة، وده الجدول اللي بنشتغل بيه.' : 'A+ isn’t a slogan — it’s a checklist. Every item is measured, inspected and tasted before it leaves the farm. This is the sheet we grade to.'}</p></div></section>
-      <section class="sec" style="padding-top:20px"><div class="wrap"><div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp && mp.macro ? `<span class="lens" style="background-image:url('${esc(mp.macro)}')" aria-hidden="true"></span>` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>
+      <section class="sec" style="padding-top:20px"><div class="wrap"><div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp ? `<img class="std__img prod" src="${esc(sm(pimg(mp)))}" alt="" loading="lazy">` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>
       <section class="sec" style="padding-top:0"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('p.gradeSpec')}</span><h2 class="h2">${N.isAr() ? 'ورقة الفرز' : 'The grading sheet'}</h2></div></div>
         <div class="specwrap"><table class="spec"><thead><tr><th>${N.isAr() ? 'الصنف' : 'Item'}</th><th>${t('p.grade')}</th><th>${t('p.calibre')}</th><th>${t('p.origin')}</th><th>${t('p.season')}</th></tr></thead><tbody>
         ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A+')}</b></td><td>${esc(L(p.grade || {}, 'calibre'))}</td><td>${esc(L(p, 'origin'))}</td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
@@ -527,14 +541,13 @@ window.FVS = (function () {
       $$('.rv-in').forEach(el => io.observe(el));
     } else $$('.rv-in').forEach(el => el.classList.add('on'));
     railState();
+    heroAuto();
     if (name === 'products') {
       const bb = $('#buybar'), buy = $('#pdpBuy');
       if (bb && buy && 'IntersectionObserver' in window) { const o2 = new IntersectionObserver(es => es.forEach(e => bb.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0))); o2.observe(buy); }
-      if (/review=1/.test(location.hash)) setTimeout(() => { const f = $('#rvs'); f && f.scrollIntoView({ behavior: 'smooth' }); }, 300);
     }
     const ev = $('#evForm'); if (ev) ev.addEventListener('submit', sendEvent);
     const cf = $('#coForm'); if (cf) cf.addEventListener('submit', placeOrder);
-    const rf = $('#rvForm'); if (rf) rf.addEventListener('submit', sendReview);
   }
   function railState() { $$('.rail').forEach(r => { const prev = $(`[data-rail="${r.id}"][data-d="-1"]`), next = $(`[data-rail="${r.id}"][data-d="1"]`); if (!prev) return; const max = r.scrollWidth - r.clientWidth - 4, x = Math.abs(r.scrollLeft); prev.disabled = x <= 2; next.disabled = x >= max; }); }
 
@@ -576,28 +589,8 @@ window.FVS = (function () {
     f.innerHTML = `<p class="small" style="color:var(--ok);font-weight:600;margin:0">${t('rv.thanks')}</p>`;
   }
 
-  /* ─────────────── the lens (magnifier) ─────────────── */
-  let zEl = null;
-  function zoomMove(e) {
-    const host = e.target.closest && e.target.closest('[data-zoom]');
-    if (host !== zEl) { if (zEl && !zEl.dataset.keep) { const l = zEl.querySelector('.lens--live'); l && l.classList.remove('on'); } zEl = host; }
-    if (!host || document.body.dataset.lens === '0') return;
-    if (e.pointerType === 'touch' && !host.dataset.keep) return;
-    const lens = host.querySelector('.lens--live'); if (!lens) return;
-    const rc = host.getBoundingClientRect(), x = e.clientX - rc.left, y = e.clientY - rc.top, Z = +host.dataset.z || 2.4;
-    if (!lens.dataset.src) { lens.dataset.src = host.dataset.zoom; lens.style.backgroundImage = `url("${host.dataset.zoom}")`; }
-    const lw = lens.offsetWidth || 150;
-    lens.style.backgroundSize = (rc.width * Z) + 'px ' + (rc.height * Z) + 'px';
-    lens.style.backgroundPosition = (-(x * Z - lw / 2)) + 'px ' + (-(y * Z - lw / 2)) + 'px';
-    lens.style.left = x + 'px'; lens.style.top = y + 'px';
-    lens.classList.add('on');
-  }
-  function zoomLeave(e) { const host = e.target.closest && e.target.closest('[data-zoom]'); if (host && !host.dataset.keep && !host.contains(e.relatedTarget)) { const l = host.querySelector('.lens--live'); l && l.classList.remove('on'); } }
-
   /* ─────────────── events ─────────────── */
   function bind() {
-    document.addEventListener('pointermove', zoomMove, { passive: true });
-    document.addEventListener('pointerout', zoomLeave, { passive: true });
     document.addEventListener('click', e => {
       const b = e.target.closest('button, a, [data-goto]'); if (!b) { if (e.target.id === 'scrim') { closeBag(); closeModal(); } if (e.target.id === 'modal') closeModal(); return; }
       if (b.dataset.tab != null && b.closest('[data-tabs]')) { const bar = b.closest('[data-tabs]'), lim = +bar.dataset.tabs || 8, grid = bar.nextElementSibling; $$('button', bar).forEach(x => x.classList.toggle('on', x === b)); let n = 0; $$('.tcell', grid).forEach(c => { const ok = !b.dataset.tab || c.dataset.col === b.dataset.tab; c.hidden = !(ok && n < lim); if (ok) n++; }); return; }
@@ -614,7 +607,7 @@ window.FVS = (function () {
       if (b.dataset.quick) { e.preventDefault(); const p = N.product(b.dataset.quick); if (p && addToBag(p, defVar(p), 1)) { b.classList.add('ok'); b.innerHTML = '✓'; setTimeout(() => { b.classList.remove('ok'); b.textContent = b.classList.contains('pc__add') ? '+' : t('c.add'); }, 1400); } return; }
       if (b.dataset.notify) { const p = N.product(b.dataset.notify); const l = N.read(N.LS.notify, []); if (l.indexOf(p.id) < 0) l.push(p.id); N.write(N.LS.notify, l); window.open(N.wa((N.isAr() ? 'بلّغوني لما يرجع: ' : 'Please tell me when this is back: ') + title(p)), '_blank', 'noopener'); toast(t('p.notifyOk')); return; }
       if (b.dataset.rail) { const r = document.getElementById(b.dataset.rail); if (r) { r.scrollBy({ left: (+b.dataset.d) * r.clientWidth * .9 * (N.isAr() ? -1 : 1), behavior: 'smooth' }); setTimeout(railState, 450); } return; }
-      if (b.dataset.herop) { heroPid = b.dataset.herop; const sec = b.closest('[data-hero]'); const s = (C.home.sections || []).find(x => x.id === sec.dataset.hero); const base = N.product(s.product) || inSeasonList()[0]; const p = N.product(heroPid); const img = $('#heroImg'); if (img) img.style.opacity = '0'; setTimeout(() => { sec.style.setProperty('--hue', hue(p)); const dock = sec.querySelector('.hero__dock'); sec.innerHTML = heroInner(s, p, base); sec.appendChild(dock); $$('[data-herop]', dock).forEach(x => x.classList.toggle('on', x.dataset.herop === p.id)); }, 220); return; }
+      if (b.dataset.herok != null) { heroGo(+b.dataset.herok); heroAuto(); return; }
       if (b.dataset.pack) { const card2 = b.closest('[data-quickcard]'); $$('[data-pack]', card2).forEach(x => x.classList.toggle('on', x === b)); const p = N.product(card2.dataset.quickcard), v = p.variants.find(x => x.id === b.dataset.pack); const sp = $('[data-selprice]', card2); if (sp) sp.textContent = money(N.priceOf(p, v)); return; }
       if (b.dataset.addsel) { const card2 = b.closest('[data-quickcard]'); const p = N.product(b.dataset.addsel), on = $('[data-pack].on', card2); addToBag(p, p.variants.find(x => on && x.id === on.dataset.pack) || defVar(p), 1); return; }
       if (b.dataset.pdpv && pdp) { pdp.v = pdp.p.variants.find(x => x.id === b.dataset.pdpv) || pdp.v; pdpRefresh(); return; }
