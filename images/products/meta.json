@@ -1,0 +1,107 @@
+{
+ "apple-medley": {
+  "hue": "#ebb45b"
+ },
+ "banana": {
+  "hue": "#ebc045"
+ },
+ "basil": {
+  "hue": "#b5eb53"
+ },
+ "cantaloupe": {
+  "hue": "#ebcf99"
+ },
+ "carrot": {
+  "hue": "#ebb75b"
+ },
+ "cauliflower": {
+  "hue": "#dfeb80"
+ },
+ "cherry": {
+  "hue": "#eb726e"
+ },
+ "coriander": {
+  "hue": "#c1eb56"
+ },
+ "cucumber": {
+  "hue": "#b7eb72"
+ },
+ "dill": {
+  "hue": "#a8eb52"
+ },
+ "eggplant": {
+  "hue": "#deeb95"
+ },
+ "garlic": {
+  "hue": "#ebcba8"
+ },
+ "golden-apple": {
+  "hue": "#ebc356"
+ },
+ "green-apple": {
+  "hue": "#c8eb55"
+ },
+ "green-grapes": {
+  "hue": "#ebea69"
+ },
+ "green-pepper": {
+  "hue": "#a9eb69"
+ },
+ "lemon": {
+  "hue": "#ebc32f"
+ },
+ "mango": {
+  "hue": "#ebdd58"
+ },
+ "medjool-dates": {
+  "hue": "#eb895a"
+ },
+ "mint": {
+  "hue": "#b1eb4d"
+ },
+ "onion": {
+  "hue": "#eb9864"
+ },
+ "orange": {
+  "hue": "#eb992b"
+ },
+ "peach": {
+  "hue": "#eb896d"
+ },
+ "pepper-medley": {
+  "hue": "#ebab4a"
+ },
+ "pineapple": {
+  "hue": "#ebb858"
+ },
+ "potato": {
+  "hue": "#ebbc71"
+ },
+ "red-apple": {
+  "hue": "#eb5e63"
+ },
+ "red-grapes": {
+  "hue": "#eb737e"
+ },
+ "red-pepper": {
+  "hue": "#eb5a49"
+ },
+ "rosemary": {
+  "hue": "#c9eb72"
+ },
+ "strawberry": {
+  "hue": "#eb6a48"
+ },
+ "tomato": {
+  "hue": "#eb5f43"
+ },
+ "watermelon": {
+  "hue": "#d0eb7e"
+ },
+ "white-eggplant": {
+  "hue": "#ebd6a2"
+ },
+ "yellow-pepper": {
+  "hue": "#ebb019"
+ }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Sitemap: https://mohamed-sr-designer.github.io/fresh-valley-glass/sitemap.xml

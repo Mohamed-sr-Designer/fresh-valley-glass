@@ -1,0 +1,2 @@
+{ "name": "Fresh Valley", "short_name": "Fresh Valley", "start_url": "./", "display": "standalone", "background_color": "#FFFFFF", "theme_color": "#19291C",
+  "icons": [{ "src": "images/brand/icon-192.png", "sizes": "192x192", "type": "image/png" }, { "src": "images/brand/icon-512.png", "sizes": "512x512", "type": "image/png" }] }
