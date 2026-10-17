@@ -103,5 +103,104 @@
  },
  "yellow-pepper": {
   "hue": "#ebb019"
+ },
+ "zucchini": {
+  "hue": "#beeb7c"
+ },
+ "sweet-potato": {
+  "hue": "#eb7664"
+ },
+ "okra": {
+  "hue": "#c7eb6c"
+ },
+ "molokhia": {
+  "hue": "#bceb63"
+ },
+ "green-beans": {
+  "hue": "#c4eb6f"
+ },
+ "peas": {
+  "hue": "#b7eb51"
+ },
+ "cabbage": {
+  "hue": "#cceb7a"
+ },
+ "lettuce": {
+  "hue": "#c9eb6a"
+ },
+ "spinach": {
+  "hue": "#c2eb73"
+ },
+ "artichoke": {
+  "hue": "#e7eb9e"
+ },
+ "taro": {
+  "hue": "#ebae83"
+ },
+ "beetroot": {
+  "hue": "#eb6f92"
+ },
+ "green-chili": {
+  "hue": "#a9eb46"
+ },
+ "broccoli": {
+  "hue": "#c6eb78"
+ },
+ "guava": {
+  "hue": "#ebc87a"
+ },
+ "pomegranate": {
+  "hue": "#eb565c"
+ },
+ "figs": {
+  "hue": "#ebc798"
+ },
+ "prickly-pear": {
+  "hue": "#eb843e"
+ },
+ "apricot": {
+  "hue": "#eba152"
+ },
+ "plum": {
+  "hue": "#eb8c7c"
+ },
+ "mandarin": {
+  "hue": "#eba33b"
+ },
+ "pear": {
+  "hue": "#ebd65b"
+ },
+ "kiwi": {
+  "hue": "#ebba69"
+ },
+ "avocado": {
+  "hue": "#ebdf79"
+ },
+ "persimmon": {
+  "hue": "#eb8839"
+ },
+ "parsley": {
+  "hue": "#abeb52"
+ },
+ "arugula": {
+  "hue": "#b1eb5c"
+ },
+ "spring-onions": {
+  "hue": "#d8eb89"
+ },
+ "leek": {
+  "hue": "#b9eb6b"
+ },
+ "celery": {
+  "hue": "#d1eb76"
+ },
+ "radish": {
+  "hue": "#eb8f56"
+ },
+ "thyme": {
+  "hue": "#ddeb8d"
+ },
+ "purslane": {
+  "hue": "#c5eb53"
  }
 }
