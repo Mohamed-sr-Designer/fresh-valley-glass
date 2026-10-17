@@ -676,3 +676,9 @@ main { display: block; min-height: 60vh; }
 .std__img { position: absolute; inset-inline-end: 18px; top: 14px; width: 120px; height: 150px; object-fit: contain; }
 .lensx__stage { display: block; cursor: pointer; }
 @media (max-width: 960px) { .hero__in { display: block; } .std__img { width: 90px; height: 110px; } }
+/* v5: category tiles on white like the rest; boxes tile matches the others */
+.door, .door--dark { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+.door--dark .door__t span { color: var(--mute); }
+.door .arr, .door--dark .arr { background: var(--mist); color: var(--forest); }
+.door:hover { box-shadow: 0 0 0 1px var(--line), 0 24px 50px -28px rgba(25, 41, 28, .35); }
+.door--dark > img { mix-blend-mode: multiply; left: 6%; right: 6%; bottom: 0; width: 88%; height: 74%; border-radius: 0; object-fit: contain; object-position: bottom; -webkit-mask: radial-gradient(closest-side, #000 78%, transparent); mask: radial-gradient(closest-side, #000 78%, transparent); }
