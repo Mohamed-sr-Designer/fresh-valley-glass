@@ -90,7 +90,7 @@ window.NZ = (function () {
     // product
     'p.addToBag': ['Add to basket', 'أضف للسلة'], 'p.waOrder': ['Order on WhatsApp', 'اطلب على واتساب'], 'p.waMsg': ['Hi Fresh Valley, I’d like to order:', 'أهلاً فريش فالي، عايز أطلب:'],
     'p.added': ['Added to your basket', 'اتضاف للسلة'], 'p.details': ['About it', 'عنه'], 'p.storage': ['Keeping it fresh', 'إزاي يفضل طازة'], 'p.delivery': ['Delivery & promise', 'التوصيل والضمان'],
-    'p.grade': ['Grade', 'الدرجة'], 'p.origin': ['Origin', 'المنشأ'], 'p.calibre': ['Calibre', 'المقاس'], 'p.sweet': ['Min. sweetness', 'أقل حلاوة'], 'p.season': ['Season', 'الموسم'],
+    'p.grade': ['Grade', 'الدرجة'], 'p.origin': ['Origin', 'المنشأ'], 'p.calibre': ['Calibre', 'المقاس'], 'p.season': ['Season', 'الموسم'],
     'p.gradeSpec': ['Our grading spec', 'مواصفات الفرز عندنا'], 'p.inside': ['What’s inside', 'جوّه إيه'], 'p.serves': ['Serves', 'يكفي'], 'p.pairs': ['Lovely with', 'حلو مع'],
     'p.also': ['You may also like', 'ممكن يعجبك كمان'], 'p.saved': ['Saved', 'اتحفظ'], 'p.save': ['Save', 'حفظ'], 'p.notFound': ['This item isn’t available.', 'الصنف ده مش متاح.'],
     'p.lowStock': ['Only {n} left today', 'فاضل {n} بس النهارده'], 'p.copyLink': ['Copy link', 'انسخ اللينك'], 'p.linkCopied': ['Link copied', 'اتنسخ اللينك'],
