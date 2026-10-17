@@ -166,7 +166,7 @@ window.FVS = (function () {
   const faqList = list => `<div class="faq">${list.map(q => `<details class="qa"><summary>${esc(L(q, 'q'))}${ic('plus')}</summary><div>${esc(L(q, 'a'))}</div></details>`).join('')}</div>`;
 
   function home() {
-    return (C.home.sections || []).filter(s => s.on !== false && SEC[s.type]).map(s => { try { return SEC[s.type](s); } catch (e) { console.error(e); return ''; } }).join('');
+    return (C.home.sections || []).filter(s => s.on !== false && SEC[s.type]).map(s => { try { const h = SEC[s.type](s); return s.bg && h ? `<div class="bg-${esc(s.bg)}">${h}</div>` : h; } catch (e) { console.error(e); return ''; } }).join('');
   }
 
   /* ─────────────── shop / collection ─────────────── */
@@ -442,12 +442,13 @@ window.FVS = (function () {
         <div class="hdr__act"><button class="ib gf rim" data-search aria-label="${t('nav.search')}">${ic('search')}</button><a class="ib gf rim hide-m" href="#/saved" aria-label="${t('nav.saved')}">${ic('heart')}</a><button class="lang gf rim" data-lang>${N.isAr() ? 'EN' : 'ع'}</button><button class="ib gf rim" data-bag aria-label="${t('nav.bag')}">${ic('bag')}<span class="cnt" data-bagcount></span></button></div>
       </div></header>
       <main id="view" tabindex="-1"></main>
-      <footer class="ftr">${halo()}<div class="wrap"><div class="ftr__g">
+      <footer class="ftr"><div class="wrap">
+        <div class="ftr__cta"><div><span class="kick">${t('m.getInTouch')}</span><h2 class="h3">${N.isAr() ? 'اطلب قبل ١ الضهر — <em>يوصلك النهارده.</em>' : 'Order by 1 pm — <em>at your door today.</em>'}</h2></div><div class="ftr__btns"><a class="btn btn--olive" href="#/shop">${t('c.shopNow')}</a><a class="btn btn--line" target="_blank" rel="noopener" href="${esc(N.wa(''))}">${ic('wa')} ${t('c.whatsapp')}</a></div></div>
+        <div class="ftr__g">
         <div><span class="logo logo--light" style="width:90px;height:58px"></span><p style="max-width:320px;margin-top:18px">${esc(L(C.settings, 'tagline'))}</p><div class="pay">${Object.keys(C.settings.payments || {}).filter(k => C.settings.payments[k].on).map(k => `<span>${esc(LL(C.settings.payments[k]))}</span>`).join('')}</div></div>
         <div><h4>${t('nav.shop')}</h4><ul>${N.collections().map(c => `<li><a href="#/collections/${esc(c.handle)}">${esc(L(c, 'title'))}</a></li>`).join('')}<li><a href="#/shop?season=1">${t('c.inSeason')}</a></li></ul></div>
         <div><h4>Fresh Valley</h4><ul>${(C.nav.footer || []).map(n => `<li><a href="${esc(n.to)}">${esc(LL(n))}</a></li>`).join('')}</ul></div>
-        <div class="gw"><h4>${t('m.getInTouch')}</h4><p style="margin:0 0 14px">${t('m.deliveryArea')}<br>${esc(L(C.settings.shipping, 'eta'))}</p><a class="btn btn--olive btn--sm" target="_blank" rel="noopener" href="${esc(N.wa(''))}">${ic('wa')} ${t('c.whatsapp')}</a>
-          <p style="margin:14px 0 0;font-size:13px"><a href="mailto:${esc(C.settings.email)}">${esc(C.settings.email)}</a>${C.settings.instagram ? ` · <a target="_blank" rel="noopener" href="https://instagram.com/${esc(C.settings.instagram)}">@${esc(C.settings.instagram)}</a>` : ''}</p></div>
+        <div><h4>${t('m.deliveryArea')}</h4><p style="margin:0 0 12px">${esc(L(C.settings.shipping, 'eta'))}</p><ul><li><a href="mailto:${esc(C.settings.email)}">${esc(C.settings.email)}</a></li>${C.settings.instagram ? `<li><a target="_blank" rel="noopener" href="https://instagram.com/${esc(C.settings.instagram)}">@${esc(C.settings.instagram)}</a></li>` : ''}<li><a target="_blank" rel="noopener" href="${esc(N.wa(''))}">WhatsApp</a></li></ul></div>
       </div><div class="ftr__b"><span>${t('m.rights', { y: year() })}</span><span><a href="#/policies/privacy">${N.isAr() ? 'الخصوصية' : 'Privacy'}</a> · <a href="#/policies/terms">${N.isAr() ? 'الشروط' : 'Terms'}</a> · <a href="admin.html">${t('m.dashboard')}</a></span></div></div></footer>
       <nav class="dock gf rim" aria-label="Quick"><a href="#/" data-dock="home">${ic('home')}${t('nav.home')}</a><a href="#/shop" data-dock="shop">${ic('grid')}${t('nav.shop')}</a><a href="#/collections/boxes" data-dock="boxes">${ic('box')}${t('nav.boxes')}</a><button data-bag>${ic('bag')}${t('nav.bag')}<span class="cnt" data-bagcount></span></button></nav>
       <div class="scrim" id="scrim"></div><aside class="drawer gf rim" id="bag" aria-hidden="true" aria-label="${t('b.title')}"></aside><div class="modal" id="modal" role="dialog" aria-modal="true"></div><div class="toasts" id="toasts" aria-live="polite"></div>`;
