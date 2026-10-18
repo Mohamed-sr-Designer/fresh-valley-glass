@@ -12,7 +12,7 @@
 
   /* link targets for menus & buttons */
   function targets() {
-    const t = [['#/', A('الرئيسية', 'Home')], ['#/shop', A('كل المنتجات', 'Shop all')], ['#/hosting', A('فن الضيافة + المناسبات', 'The Art of Hosting + events')], ['#/standard', A('معيار A+', 'Our A+ standard')], ['#/faq', A('الأسئلة', 'FAQ')], ['#/journal', A('المجلة', 'Journal')], ['#/saved', A('المحفوظ', 'Saved')], ['#/orders', A('تتبّع الطلبات', 'Track orders')]];
+    const t = [['#/', A('الرئيسية', 'Home')], ['#/shop', A('كل المنتجات', 'Shop all')], ['#/hosting', A('فن الضيافة + المناسبات', 'The Art of Hosting + events')], ['#/standard', A('معيار A', 'Our A standard')], ['#/faq', A('الأسئلة', 'FAQ')], ['#/journal', A('المجلة', 'Journal')], ['#/saved', A('المحفوظ', 'Saved')], ['#/orders', A('تتبّع الطلبات', 'Track orders')]];
     D().collections.forEach(c => t.push(['#/collections/' + c.handle, A('كولكشن: ', 'Collection: ') + T(c, 'title')]));
     (D().pages.policies || []).forEach(p => t.push(['#/policies/' + p.id, A('صفحة: ', 'Page: ') + T(p, 'title')]));
     return t;
@@ -25,7 +25,7 @@
 
   /* ═════════════════════════ HOMEPAGE ═════════════════════════ */
   const OPEN = new Set();
-  const TYPES = () => ({ hero: A('البطل — منتج كبير وعدسات زجاج', 'Hero — big product + glass lenses'), trust: A('شريط الثقة', 'Trust strip'), products: A('شبكة منتجات', 'Product grid'), lens: A('منتج الأسبوع', 'Product of the week'), collections: A('الأقسام', 'Category doors'), boxes: A('صناديق الضيافة', 'Hosting boxes'), standard: A('معيار A+ (خطوات)', 'A+ standard (steps)'), editorial: A('صورة + نص', 'Image with text'), band: A('شريط بلون البراند', 'Brand band'), promos: A('بانرين عروض', 'Two promo banners'), faq: A('أسئلة شائعة', 'FAQ') });
+  const TYPES = () => ({ hero: A('البطل — منتج كبير وعدسات زجاج', 'Hero — big product + glass lenses'), trust: A('شريط الثقة', 'Trust strip'), products: A('شبكة منتجات', 'Product grid'), lens: A('منتج الأسبوع', 'Product of the week'), collections: A('الأقسام', 'Category doors'), boxes: A('صناديق الضيافة', 'Hosting boxes'), standard: A('معيار A (خطوات)', 'A standard (steps)'), editorial: A('صورة + نص', 'Image with text'), band: A('شريط بلون البراند', 'Brand band'), promos: A('بانرين عروض', 'Two promo banners'), faq: A('أسئلة شائعة', 'FAQ') });
   const BLANK = {
     hero: { type: 'hero', on: true, product: 'orange', kicker_en: '', kicker_ar: '', title_en: 'New', title_ar: 'جديد', title2_en: 'headline.', title2_ar: 'عنوان.', text_en: '', text_ar: '', cta_en: 'Shop now', cta_ar: 'تسوّق دلوقتي', to: '#/shop', cta2_en: '', cta2_ar: '', to2: '#/standard' },
     trust: { type: 'trust', on: true, items: [{ icon: 'truck', en: '', ar: '' }] },
@@ -33,7 +33,7 @@
     lens: { type: 'lens', on: true, product: 'strawberry', kicker_en: 'Look closer', kicker_ar: 'قرّب أكتر', title_en: '', title_ar: '', text_en: '', text_ar: '' },
     collections: { type: 'collections', on: true, kicker_en: 'Shop the valley', kicker_ar: 'تسوّق من الوادي', title_en: '', title_ar: '' },
     boxes: { type: 'boxes', on: true, kicker_en: 'The Art of Hosting', kicker_ar: 'فن الضيافة', title_en: '', title_ar: '', text_en: '', text_ar: '' },
-    standard: { type: 'standard', on: true, kicker_en: 'Our A+ standard', kicker_ar: 'معيار A+', title_en: '', title_ar: '', steps: [{ en: '', ar: '', t_en: '', t_ar: '' }] },
+    standard: { type: 'standard', on: true, kicker_en: 'Our A standard', kicker_ar: 'معيار A', title_en: '', title_ar: '', steps: [{ en: '', ar: '', t_en: '', t_ar: '' }] },
     editorial: { type: 'editorial', on: true, image: '', kicker_en: '', kicker_ar: '', title_en: '', title_ar: '', text_en: '', text_ar: '', cta_en: '', cta_ar: '', to: '#/shop' },
     band: { type: 'band', on: true, kicker_en: '', kicker_ar: '', title_en: '', title_ar: '', text_en: '', text_ar: '', cta_en: '', cta_ar: '', to: '#/hosting' },
     promos: { type: 'promos', on: true, items: [{ title_en: 'New offer', title_ar: 'عرض جديد', text_en: '', text_ar: '', cta_en: 'Shop now', cta_ar: 'تسوّق دلوقتي', to: '#/shop', image: '', tone: 'forest' }] },

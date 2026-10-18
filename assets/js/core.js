@@ -128,7 +128,7 @@ window.NZ = (function () {
     'r.send': ['Send request', 'ابعت الطلب'], 'r.fine': ['No payment now. A host from our team calls you with a plan and a price.', 'مفيش دفع دلوقتي. حد من فريق الضيافة هيكلّمك بخطة وسعر.'],
     'r.done': ['Request received', 'وصلنا طلبك'], 'r.again': ['Send another', 'ابعت طلب تاني'], 'r.no': ['Request no. {id}', 'رقم الطلب · {id}'], 'r.errName': ['Please enter your name.', 'اكتب اسمك.'], 'r.errGuests': ['How many guests?', 'كام ضيف؟'],
     // misc
-    'm.faq': ['Questions', 'الأسئلة'], 'm.journal': ['Journal', 'المجلة'], 'm.standard': ['Our A+ standard', 'معيار A+'], 'm.hosting': ['The Art of Hosting', 'فن الضيافة'],
+    'm.faq': ['Questions', 'الأسئلة'], 'm.journal': ['Journal', 'المجلة'], 'm.standard': ['Our A standard', 'معيار A'], 'm.hosting': ['The Art of Hosting', 'فن الضيافة'],
     'm.404': ['Out of season.', 'مش في موسمه.'], 'm.404t': ['This page isn’t on the shelf anymore.', 'الصفحة دي مش على الرف تاني.'],
     'm.searchPh': ['Search strawberries, herbs, boxes…', 'دوّر على فراولة، أعشاب، صناديق…'], 'm.noResults': ['No results for “{q}”.', 'مفيش نتايج لـ «{q}».'],
     'm.getInTouch': ['Get in touch', 'تواصل معنا'], 'm.deliveryArea': ['Delivery — East & West Cairo', 'التوصيل — شرق وغرب القاهرة'],

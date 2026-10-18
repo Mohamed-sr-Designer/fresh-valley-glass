@@ -68,7 +68,7 @@ window.FVS = (function () {
     if (p.box) return (p.badges || []).indexOf('bestseller') > -1 ? `<span class="chip gf rim tag">${t('c.bestseller')}</span>` : `<span class="chip gf rim tag">${esc(L(p.variants[0], 'serves') || t('c.tier'))}</span>`;
     if (seasonal(p) && N.inSeason(p)) return `<span class="chip gf rim tag"><span class="dot"></span>${t('c.inSeason')}</span>`;
     if ((p.badges || []).indexOf('organic') > -1) return `<span class="chip gf rim tag">${t('c.organic')}</span>`;
-    return `<span class="chip gf rim tag">${esc((p.grade && p.grade.label) || 'A+')} · ${N.isAr() ? 'درجة' : 'grade'}</span>`;
+    return `<span class="chip gf rim tag">${esc((p.grade && p.grade.label) || 'A')} · ${N.isAr() ? 'درجة' : 'grade'}</span>`;
   }
 
   /* ─────────────── product card ─────────────── */
@@ -157,7 +157,7 @@ window.FVS = (function () {
       <div class="stage-wrap">${halo('', hue(p))}<a class="lensx__stage" href="#/products/${esc(p.handle)}" style="aspect-ratio:4/5"><img class="prod" src="${esc(pimg(p))}" alt="${esc(title(p))}" loading="lazy"></a></div>
       <div class="rv-in"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2" style="margin:12px 0 18px">${esc(L(s, 'title'))}</h2><p class="lead">${esc(L(s, 'text') || L(p, 'desc'))}</p>
         <div class="gradecard gf rim" style="margin-top:28px">
-          <div class="top"><div><small>${t('p.grade')}</small><div class="big">${esc(g.label || 'A+')}</div></div><span class="chip gt">${esc(title(p))}</span></div>
+          <div class="top"><div><small>${t('p.grade')}</small><div class="big">${esc(g.label || 'A')}</div></div><span class="chip gt">${esc(title(p))}</span></div>
 
           <div class="row"><span>${t('p.calibre')}</span><b>${esc(L(g, 'calibre'))}</b></div>
           <div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div>
@@ -258,7 +258,7 @@ window.FVS = (function () {
             <a class="btn btn--wa" target="_blank" rel="noopener" data-pdpwa href="${esc(N.wa(t('p.waMsg') + '\n' + title(p) + ' — ' + packName(sel)))}">${ic('wa')}</a>
             <button class="ib gf rim${N.wish.has(p.id) ? ' on' : ''}" data-fav="${esc(p.id)}" aria-label="${t('p.save')}">${ic('heart')}</button></div>
           <div class="pdp__lines"><div>${ic('clock')}<span>${t('p.today')}</span></div><div>${ic('shield')}<span>${t('p.promise')}</span></div></div>
-          ${!p.box ? `<div class="gradecard gf rim" style="margin-bottom:26px"><div class="top"><div><small>${t('p.gradeSpec')}</small><div class="big">${esc(g.label || 'A+')}</div></div><span class="chip gt">${t('c.export')}</span></div>
+          ${!p.box ? `<div class="gradecard gf rim" style="margin-bottom:26px"><div class="top"><div><small>${t('p.gradeSpec')}</small><div class="big">${esc(g.label || 'A')}</div></div><span class="chip gt">${t('c.export')}</span></div>
 
             <div class="row"><span>${t('p.calibre')}</span><b>${esc(L(g, 'calibre'))}</b></div><div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div><div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div></div>`
             : `<div style="margin-bottom:26px"><span class="pdp__lbl">${t('p.inside')}</span><div class="inc">${(N.isAr() ? (p.includes_ar || p.includes_en) : (p.includes_en || p.includes_ar) || []).map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`}
@@ -321,12 +321,12 @@ window.FVS = (function () {
     const hp = N.product('strawberry');
     const rows = live().filter(p => !p.box);
     return `<section class="ph" style="--hue:${esc(hp ? hue(hp) : '#E5383F')}">${halo()}${hp ? `<img class="ph__img prod" src="${esc(pimg(hp))}" alt="">` : ''}<div class="wrap"><nav class="crumbs"><a href="#/">${t('nav.home')}</a><span>/</span><span>${t('m.standard')}</span></nav>
-        <span class="kick">Class A+</span><h1 class="h1" style="margin-top:16px;max-width:820px">${esc(L(s, 'title') || t('m.standard'))}</h1>
-        <p class="lead" style="margin-top:22px">${N.isAr() ? 'A+ مش شعار — دي قايمة فحص. كل صنف بيتقاس ويتفحص ويتذاق قبل ما يخرج من المزرعة، وده الجدول اللي بنشتغل بيه.' : 'A+ isn’t a slogan — it’s a checklist. Every item is measured, inspected and tasted before it leaves the farm. This is the sheet we grade to.'}</p></div></section>
+        <span class="kick">Class A</span><h1 class="h1" style="margin-top:16px;max-width:820px">${esc(L(s, 'title') || t('m.standard'))}</h1>
+        <p class="lead" style="margin-top:22px">${N.isAr() ? 'A مش شعار — دي قايمة فحص. كل صنف بيتقاس ويتفحص ويتذاق قبل ما يخرج من المزرعة، وده الجدول اللي بنشتغل بيه.' : 'A isn’t a slogan — it’s a checklist. Every item is measured, inspected and tasted before it leaves the farm. This is the sheet we grade to.'}</p></div></section>
       <section class="sec" style="padding-top:20px"><div class="wrap"><div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp ? `<img class="std__img prod" src="${esc(sm(pimg(mp)))}" alt="" loading="lazy">` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>
       <section class="sec" style="padding-top:0"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('p.gradeSpec')}</span><h2 class="h2">${N.isAr() ? 'ورقة الفرز' : 'The grading sheet'}</h2></div></div>
         <div class="specwrap"><table class="spec"><thead><tr><th>${N.isAr() ? 'الصنف' : 'Item'}</th><th>${t('p.grade')}</th><th>${t('p.calibre')}</th><th>${t('p.origin')}</th><th>${t('p.season')}</th></tr></thead><tbody>
-        ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A+')}</b></td><td>${esc(L(p.grade || {}, 'calibre'))}</td><td>${esc(L(p, 'origin'))}</td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
+        ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A')}</b></td><td>${esc(L(p.grade || {}, 'calibre'))}</td><td>${esc(L(p, 'origin'))}</td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
   }
 
   /* ─────────────── journal / faq / policies ─────────────── */
