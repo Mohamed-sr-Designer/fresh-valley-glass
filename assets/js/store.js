@@ -1,5 +1,5 @@
 /* =========================================================================
-   Fresh Valley — "Liquid Lens" storefront (hash-routed single page)
+   Fresh Valley — storefront (hash-routed single page)
    Reads everything from window.NZ (core.js): content, catalog, cart, orders.
    Routes: #/  #/shop  #/collections/:h  #/products/:h  #/hosting  #/standard
            #/journal(/:id)  #/faq  #/policies/:id  #/saved  #/orders
@@ -159,7 +159,6 @@ window.FVS = (function () {
         <div class="gradecard gf rim" style="margin-top:28px">
           <div class="top"><div><small>${t('p.grade')}</small><div class="big">${esc(g.label || 'A')}</div></div><span class="chip gt">${esc(title(p))}</span></div>
 
-          <div class="row"><span>${t('p.calibre')}</span><b>${esc(L(g, 'calibre'))}</b></div>
           <div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div>
           <div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div>
           <a class="btn btn--dark btn--block" style="margin-top:10px" href="#/products/${esc(p.handle)}">${t('c.shopNow')} · ${money(N.priceOf(p, defVar(p)))}</a>
@@ -191,6 +190,12 @@ window.FVS = (function () {
   SEC.band = s => `<section class="sec"><div class="wrap"><div class="band rv-in"><span class="halo" style="--hue:#AE9D57;right:-160px;top:-200px" aria-hidden="true"></span><div style="position:relative;z-index:2"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2">${esc(L(s, 'title'))}</h2><p>${esc(L(s, 'text'))}</p></div>
     <div class="gw"><span class="chip" style="background:rgba(255,255,255,.1);color:#fff"><span class="dot"></span>${t('m.hosting')}</span><a class="btn btn--olive" href="${esc(s.to || '#/hosting')}">${esc(L(s, 'cta'))}</a><a class="btn" style="background:rgba(255,255,255,.1);color:#fff" target="_blank" rel="noopener" href="${esc(N.wa(t('p.waMsg')))}">${ic('wa')} ${t('c.whatsapp')}</a></div></div></div></section>`;
   SEC.editorial = s => `<section class="sec"><div class="wrap"><div class="edit"><div class="edit__img rv-in">${s.image ? `<img class="prod" src="${esc(s.image)}" alt="" loading="lazy">` : ''}</div><div class="rv-in"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2" style="margin:12px 0 18px">${esc(L(s, 'title'))}</h2><p class="lead">${esc(L(s, 'text'))}</p>${L(s, 'cta') ? `<a class="btn btn--dark" style="margin-top:26px" href="${esc(s.to || '#/shop')}">${esc(L(s, 'cta'))}</a>` : ''}</div></div></div></section>`;
+  /* lifestyle mosaic: real homes, real tables */
+  SEC.life = s => `<section class="sec"><div class="wrap"><div class="sec__h rv-in"><div><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2">${esc(L(s, 'title'))}</h2>${L(s, 'text') ? `<p class="lead">${esc(L(s, 'text'))}</p>` : ''}</div><a class="btn btn--dark btn--sm" href="#/collections/boxes">${t('c.shopNow')}</a></div>
+    <div class="life">${(s.items || []).map((x, i) => `<figure class="life__i rv-in${i ? '' : ' life__i--big'}"><img src="${esc(x.image)}" alt="${esc(L(x, 'cap'))}" loading="lazy"><figcaption>${esc(L(x, 'cap'))}</figcaption></figure>`).join('')}</div></div></section>`;
+  /* every box has a second life */
+  SEC.reuse = s => `<section class="sec"><div class="wrap"><div class="sec__h rv-in"><div><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2">${esc(L(s, 'title'))}</h2></div></div>
+    <div class="reuse">${(s.items || []).map(x => `<article class="reuse__i rv-in"><div class="reuse__img"><img src="${esc(x.image)}" alt="" loading="lazy"></div><h3>${esc(L(x, 'title'))}</h3><p>${esc(L(x, 'text'))}</p></article>`).join('')}</div></div></section>`;
   SEC.faq = s => `<section class="sec"><div class="wrap" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:40px" data-faqgrid><div class="rv-in"><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2" style="margin-top:12px">${esc(L(s, 'title'))}</h2><a class="btn btn--glass gf rim btn--sm" style="margin-top:22px" href="#/faq">${t('c.viewAll')}</a></div>${faqList((C.pages.faq || []).slice(0, +s.limit || 5))}</div></section>`;
   const faqList = list => `<div class="faq">${list.map(q => `<details class="qa"><summary>${esc(L(q, 'q'))}${ic('plus')}</summary><div>${esc(L(q, 'a'))}</div></details>`).join('')}</div>`;
 
@@ -243,6 +248,7 @@ window.FVS = (function () {
           <div class="pdp__stage">${halo()}<img class="prod" id="pdpImg" src="${esc(img)}" alt="${esc(title(p))}" width="1000" height="1250">
             <div class="tagrow">${badge(p).replace(' tag"', '"')}</div>
           </div>
+          ${(p.gallery || []).length ? `<div class="pdp__thumbs">${[img].concat(p.gallery).map((u, i) => `<button class="${i ? '' : 'on'}" data-thumb="${esc(u)}" aria-label="${esc(title(p))} ${i + 1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
 
         </div>
         <div class="pdp__info">
@@ -260,7 +266,7 @@ window.FVS = (function () {
           <div class="pdp__lines"><div>${ic('clock')}<span>${t('p.today')}</span></div><div>${ic('shield')}<span>${t('p.promise')}</span></div></div>
           ${!p.box ? `<div class="gradecard gf rim" style="margin-bottom:26px"><div class="top"><div><small>${t('p.gradeSpec')}</small><div class="big">${esc(g.label || 'A')}</div></div><span class="chip gt">${t('c.export')}</span></div>
 
-            <div class="row"><span>${t('p.calibre')}</span><b>${esc(L(g, 'calibre'))}</b></div><div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div><div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div></div>`
+            <div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div><div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div></div>`
             : `<div style="margin-bottom:26px"><span class="pdp__lbl">${t('p.inside')}</span><div class="inc">${(N.isAr() ? (p.includes_ar || p.includes_en) : (p.includes_en || p.includes_ar) || []).map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`}
           <div class="acc">
             <details open><summary>${t('p.details')}${ic('plus')}</summary><div class="body">${esc(L(p, 'desc'))}</div></details>
@@ -294,7 +300,7 @@ window.FVS = (function () {
 
   /* ─────────────── hosting (boxes + events) ─────────────── */
   function hosting(q) {
-    const bs = N.inCollection('boxes'), P = C.pages.custom || {}, hp = N.product('hosting-box');
+    const bs = N.inCollection('boxes'), P = C.pages.custom || {}, hp = N.product('the-host');
     const kinds = P.materials || [];
     return `<section class="ph" style="--hue:${esc(hp ? hue(hp) : '#E5383F')};padding-bottom:20px">${halo()}${hp ? `<img class="ph__img prod" src="${esc(pimg(hp))}" alt="" style="width:min(44vw,520px)">` : ''}<div class="wrap">
         <nav class="crumbs"><a href="#/">${t('nav.home')}</a><span>/</span><span>${t('m.hosting')}</span></nav>
@@ -322,11 +328,11 @@ window.FVS = (function () {
     const rows = live().filter(p => !p.box);
     return `<section class="ph" style="--hue:${esc(hp ? hue(hp) : '#E5383F')}">${halo()}${hp ? `<img class="ph__img prod" src="${esc(pimg(hp))}" alt="">` : ''}<div class="wrap"><nav class="crumbs"><a href="#/">${t('nav.home')}</a><span>/</span><span>${t('m.standard')}</span></nav>
         <span class="kick">Class A</span><h1 class="h1" style="margin-top:16px;max-width:820px">${esc(L(s, 'title') || t('m.standard'))}</h1>
-        <p class="lead" style="margin-top:22px">${N.isAr() ? 'A مش شعار — دي قايمة فحص. كل صنف بيتقاس ويتفحص ويتذاق قبل ما يخرج من المزرعة، وده الجدول اللي بنشتغل بيه.' : 'A isn’t a slogan — it’s a checklist. Every item is measured, inspected and tasted before it leaves the farm. This is the sheet we grade to.'}</p></div></section>
+        <p class="lead" style="margin-top:22px">${N.isAr() ? 'A مش شعار — دي قايمة فحص. كل صنف بيتقطف النهارده ويتفحص بالإيد ويتذاق قبل ما يخرج من المزرعة، وده الجدول اللي بنشتغل بيه.' : 'A isn’t a slogan — it’s a checklist. Every item is picked today, inspected by hand and tasted before it leaves the farm. This is the sheet we grade to.'}</p></div></section>
       <section class="sec" style="padding-top:20px"><div class="wrap"><div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp ? `<img class="std__img prod" src="${esc(sm(pimg(mp)))}" alt="" loading="lazy">` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>
       <section class="sec" style="padding-top:0"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('p.gradeSpec')}</span><h2 class="h2">${N.isAr() ? 'ورقة الفرز' : 'The grading sheet'}</h2></div></div>
-        <div class="specwrap"><table class="spec"><thead><tr><th>${N.isAr() ? 'الصنف' : 'Item'}</th><th>${t('p.grade')}</th><th>${t('p.calibre')}</th><th>${t('p.origin')}</th><th>${t('p.season')}</th></tr></thead><tbody>
-        ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A')}</b></td><td>${esc(L(p.grade || {}, 'calibre'))}</td><td>${esc(L(p, 'origin'))}</td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
+        <div class="specwrap"><table class="spec"><thead><tr><th>${N.isAr() ? 'الصنف' : 'Item'}</th><th>${t('p.grade')}</th><th>${t('p.origin')}</th><th>${t('p.season')}</th></tr></thead><tbody>
+        ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A')}</b></td><td>${esc(L(p, 'origin'))}</td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
   }
 
   /* ─────────────── journal / faq / policies ─────────────── */

@@ -25,7 +25,7 @@
 
   /* ═════════════════════════ HOMEPAGE ═════════════════════════ */
   const OPEN = new Set();
-  const TYPES = () => ({ hero: A('البطل — منتج كبير وعدسات زجاج', 'Hero — big product + glass lenses'), trust: A('شريط الثقة', 'Trust strip'), products: A('شبكة منتجات', 'Product grid'), lens: A('منتج الأسبوع', 'Product of the week'), collections: A('الأقسام', 'Category doors'), boxes: A('صناديق الضيافة', 'Hosting boxes'), standard: A('معيار A (خطوات)', 'A standard (steps)'), editorial: A('صورة + نص', 'Image with text'), band: A('شريط بلون البراند', 'Brand band'), promos: A('بانرين عروض', 'Two promo banners'), faq: A('أسئلة شائعة', 'FAQ') });
+  const TYPES = () => ({ hero: A('البطل — سلايدر المنتجات', 'Hero — product slider'), life: A('لايف ستايل', 'Lifestyle mosaic'), reuse: A('حياة تانية للبوكس', 'Second life of the box'), trust: A('شريط الثقة', 'Trust strip'), products: A('شبكة منتجات', 'Product grid'), lens: A('منتج الأسبوع', 'Product of the week'), collections: A('الأقسام', 'Category doors'), boxes: A('صناديق الضيافة', 'Hosting boxes'), standard: A('معيار A (خطوات)', 'A standard (steps)'), editorial: A('صورة + نص', 'Image with text'), band: A('شريط بلون البراند', 'Brand band'), promos: A('بانرين عروض', 'Two promo banners'), faq: A('أسئلة شائعة', 'FAQ') });
   const BLANK = {
     hero: { type: 'hero', on: true, product: 'orange', kicker_en: '', kicker_ar: '', title_en: 'New', title_ar: 'جديد', title2_en: 'headline.', title2_ar: 'عنوان.', text_en: '', text_ar: '', cta_en: 'Shop now', cta_ar: 'تسوّق دلوقتي', to: '#/shop', cta2_en: '', cta2_ar: '', to2: '#/standard' },
     trust: { type: 'trust', on: true, items: [{ icon: 'truck', en: '', ar: '' }] },
@@ -94,7 +94,7 @@
     render() {
       return `<div class="page page--narrow">${ph(A('الثيم والهوية', 'Theme'), { act: `<button class="btn" data-preview>${icon('eye')}${A('معاينة', 'Preview')}</button>` })}
         ${colourCard()}
-        ${card(A('الشكل', 'Style'), `<div style="display:grid;gap:12px">${F.num('theme.radius', A('استدارة الكروت (px)', 'Card radius (px)'), { min: 0 })}${F.bool('theme.lens', A('العدسة على صور المنتجات', 'Lens on product photos'), { hint: A('لما الماوس يعدّي، العدسة بتكبّر ملمس الصنف', 'On hover the lens magnifies the real texture') })}${F.bool('theme.halos', A('هالات الألوان ورا الزجاج', 'Colour halos behind the glass'))}
+        ${card(A('الشكل', 'Style'), `<div style="display:grid;gap:12px">${F.num('theme.radius', A('استدارة الكروت (px)', 'Card radius (px)'), { min: 0 })}${F.bool('theme.halos', A('هالات الألوان ورا الزجاج', 'Colour halos behind the glass'))}
           ${F.select('settings.defaultLang', A('اللغة الافتراضية', 'Default language'), [['en', 'English'], ['ar', 'العربية']])}</div>`)}
         ${card(A('اللوجو', 'Logo'), `<div class="fgrid">${F.img('theme.logo', A('اللوجو الغامق (على خلفية فاتحة)', 'Dark logo (on light)'), { max: 600 })}${F.img('theme.logoLight', A('اللوجو الفاتح (على خلفية غامقة)', 'Light logo (on dark)'), { max: 600 })}</div><p class="muted small" style="margin:10px 0 0">${A('لو فاضي بيستخدم اللوجو الأصلي.', 'Empty = the original logo.')}</p>`)}
         ${card(A('شريط الإعلانات المتحرك', 'Announcement marquee'), listEd('settings.announcement', b => F.pair(b, A('رسالة', 'Message')), { en: '', ar: '' }))}</div>`;
