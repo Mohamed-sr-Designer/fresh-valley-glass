@@ -714,3 +714,6 @@ img[src*="images/boxes/"], img[src*="images/life/"] { mix-blend-mode: normal !im
 .ph .halo { display: none !important; }
 .ph__img:not([src*="images/boxes/"]) { -webkit-mask: radial-gradient(closest-side, #000 72%, transparent) !important; mask: radial-gradient(closest-side, #000 72%, transparent) !important; mix-blend-mode: multiply; }
 .jc__img img[src*="images/life/"] { width: 100%; height: 100%; object-fit: cover; }
+/* v9: category doors — soft elliptical fade on every edge, so contact shadows melt instead of stopping at the photo edge */
+.door:not(.door--dark) > img:not([src*="images/boxes/"]) { -webkit-mask: radial-gradient(ellipse 50% 50% at 50% 50%, #000 55%, transparent 100%) !important; mask: radial-gradient(ellipse 50% 50% at 50% 50%, #000 55%, transparent 100%) !important; }
+.door:not(.door--dark) > img:not([src*="images/boxes/"]) { width: auto !important; aspect-ratio: 4 / 5; height: 76%; left: 50% !important; right: auto !important; transform: translateX(-50%); object-fit: cover; -webkit-mask: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 98%) !important; mask: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 98%) !important; }
