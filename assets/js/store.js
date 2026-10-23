@@ -74,7 +74,7 @@ window.FVS = (function () {
   /* ─────────────── product card ─────────────── */
   function card(p) {
     const v = defVar(p), out = outAll(p), h = '#/products/' + encodeURIComponent(p.handle);
-    const sub = p.box ? (L(v, 'serves') || L(p, 'sub')) : L(p, 'origin');
+    const sub = p.box ? (L(v, 'serves') || L(p, 'sub')) : L(p, 'season');
     return `<article class="pc${out ? ' pc--out' : ''}" style="--hue:${esc(hue(p))}"><div class="pc__media">
       <a class="pc__well" href="${h}" aria-label="${esc(title(p))}">${halo()}<img class="prod" src="${esc(sm(pimg(p)))}" alt="${esc(title(p))}" loading="lazy" width="480" height="600"></a>
       ${badge(p)}
@@ -107,12 +107,12 @@ window.FVS = (function () {
     const v = defVar(p);
     return `<div class="hero__img">${halo()}<img class="prod" src="${esc(pimg(p))}" alt="${esc(title(p))}" width="1000" height="1250"${heroIdx ? '' : ' fetchpriority="high"'}></div>
       <div class="wrap"><div class="hero__copy">
-        <span class="chip gf rim"><span class="dot"></span>${esc(L(x, 'kicker') || title(p) + ' · ' + L(p, 'origin'))}</span>
+        <span class="chip gf rim"><span class="dot"></span>${esc(L(x, 'kicker') || title(p) + ' · ' + L(p, 'season'))}</span>
         <h1 class="h1" style="margin-top:22px">${esc(L(x, 'title'))}<span>${esc(L(x, 'title2'))}</span></h1>
         <p class="lead">${esc(L(x, 'text') || L(p, 'desc'))}</p>
         <div class="hero__cta"><a class="btn btn--dark" href="#/products/${esc(p.handle)}">${t('c.shopNow')} ${ic('arrow').replace('class="i"', 'class="i flip"')}</a><a class="btn btn--glass gf rim" href="${esc(s.to || '#/shop')}">${esc(L(s, 'cta') || t('l.shopAll'))}</a></div>
       </div></div>
-      <div class="lns lns--a gf rim"><small>${esc(L(p, 'origin'))}</small><h4>${esc(title(p))}</h4><p>${esc(L(p, 'sub'))}</p></div>
+      <div class="lns lns--a gf rim"><small>${esc(L(p, 'season'))}</small><h4>${esc(title(p))}</h4><p>${esc(L(p, 'sub'))}</p></div>
       <div class="lns lns--b gf rim" data-quickcard="${esc(p.id)}">
         <small>${p.box ? t('c.tier') : t('c.pack')}</small>
         <div class="packs" data-packs="${esc(p.id)}" style="margin-top:10px">${p.variants.map(y => `<button class="${y.id === v.id ? 'on' : ''}" data-pack="${esc(y.id)}"${N.soldOut(p, y) ? ' disabled' : ''}>${esc(packName(y))}<small class="num">${money(N.priceOf(p, y))}</small></button>`).join('')}</div>
@@ -144,8 +144,9 @@ window.FVS = (function () {
     const head = (extra) => `<div class="sec__h rv-in"><div><span class="kick">${esc(L(s, 'kicker'))}</span><h2 class="h2">${esc(L(s, 'title'))}</h2></div><div class="sec__act">${extra || ''}<a class="btn btn--glass gf rim btn--sm" href="#/shop${s.source === 'season' ? '?season=1' : ''}">${t('c.viewAll')}</a></div></div>`;
     if (s.tabs) {
       const cols = N.collections().filter(c => c.group !== 'boxes' && list.some(p => p.collection === c.id));
-      const per = {}; const cells = list.map(p => { per[p.collection] = (per[p.collection] || 0) + 1; return `<div class="tcell" data-col="${esc(p.collection)}" data-n="${per[p.collection]}"${list.indexOf(p) >= lim ? ' hidden' : ''}>${card(p)}</div>`; });
-      return `<section class="sec"><div class="wrap">${head()}<div class="tabs" role="tablist" data-tabs="${lim}"><button class="on" data-tab="">${t('l.all')}</button>${cols.map(c => `<button data-tab="${esc(c.id)}">${esc(L(c, 'short') || L(c, 'title'))}</button>`).join('')}</div><div class="grid">${cells.join('')}</div></div></section>`;
+      const sea = inSeasonList().filter(seasonal), ins = new Set(sea.map(p => p.id)); list = [...list, ...sea.filter(p => !list.includes(p))];
+      const per = {}; const cells = list.map((p, i) => { per[p.collection] = (per[p.collection] || 0) + 1; return `<div class="tcell" data-col="${esc(p.collection)}"${ins.has(p.id) ? ' data-s="1"' : ''} data-n="${per[p.collection]}"${i >= lim ? ' hidden' : ''}>${card(p)}</div>`; });
+      return `<section class="sec"><div class="wrap">${head()}<div class="tabs" role="tablist" data-tabs="${lim}"><button class="on" data-tab="">${t('l.all')}</button><button data-tab="__season">${N.isAr() ? 'في موسمه' : 'In season'}</button>${cols.map(c => `<button data-tab="${esc(c.id)}">${esc(L(c, 'short') || L(c, 'title'))}</button>`).join('')}</div><div class="grid">${cells.join('')}</div></div></section>`;
     }
     list = list.slice(0, lim);
     const id = 'r-' + esc(s.id);
@@ -159,7 +160,7 @@ window.FVS = (function () {
         <div class="gradecard gf rim" style="margin-top:28px">
           <div class="top"><div><small>${t('p.grade')}</small><div class="big">${esc(g.label || 'A')}</div></div><span class="chip gt">${esc(title(p))}</span></div>
 
-          <div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div>
+          
           <div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div>
           <a class="btn btn--dark btn--block" style="margin-top:10px" href="#/products/${esc(p.handle)}">${t('c.shopNow')} · ${money(N.priceOf(p, defVar(p)))}</a>
         </div></div></div></div></section>`;
@@ -252,7 +253,7 @@ window.FVS = (function () {
 
         </div>
         <div class="pdp__info">
-          <span class="kick">${esc(L(p, 'origin'))} · ${esc(L(p, 'season'))}</span>
+          <span class="kick">${esc(L(p, 'season'))}</span>
           <h1 class="h2">${esc(title(p))}</h1>
           <p class="pdp__sub">${esc(L(p, 'sub'))}</p>
           <div class="pdp__price"><b class="num" id="pdpPrice">${money(N.priceOf(p, sel))}</b>${p.compareAt && p.compareAt > p.price ? `<s class="num">${money(p.compareAt)}</s>` : ''}<small id="pdpPack">${esc(packName(sel))}</small></div>
@@ -266,7 +267,7 @@ window.FVS = (function () {
           <div class="pdp__lines"><div>${ic('clock')}<span>${t('p.today')}</span></div><div>${ic('shield')}<span>${t('p.promise')}</span></div></div>
           ${!p.box ? `<div class="gradecard gf rim" style="margin-bottom:26px"><div class="top"><div><small>${t('p.gradeSpec')}</small><div class="big">${esc(g.label || 'A')}</div></div><span class="chip gt">${t('c.export')}</span></div>
 
-            <div class="row"><span>${t('p.origin')}</span><b>${esc(L(p, 'origin'))}</b></div><div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div></div>`
+            <div class="row"><span>${t('p.season')}</span><b>${esc(L(p, 'season'))}</b></div></div>`
             : `<div style="margin-bottom:26px"><span class="pdp__lbl">${t('p.inside')}</span><div class="inc">${(N.isAr() ? (p.includes_ar || p.includes_en) : (p.includes_en || p.includes_ar) || []).map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`}
           <div class="acc">
             <details open><summary>${t('p.details')}${ic('plus')}</summary><div class="body">${esc(L(p, 'desc'))}</div></details>
@@ -331,8 +332,8 @@ window.FVS = (function () {
         <p class="lead" style="margin-top:22px">${N.isAr() ? 'A مش شعار — دي قايمة فحص. كل صنف بيتقطف النهارده ويتفحص بالإيد ويتذاق قبل ما يخرج من المزرعة، وده الجدول اللي بنشتغل بيه.' : 'A isn’t a slogan — it’s a checklist. Every item is picked today, inspected by hand and tasted before it leaves the farm. This is the sheet we grade to.'}</p></div></section>
       <section class="sec" style="padding-top:20px"><div class="wrap"><div class="std">${(s.steps || []).map((x, i) => { const mp = N.product(STD_MACRO[i % 3]); return `<div class="std__s rv-in"><span class="n">0${i + 1}</span>${mp ? `<img class="std__img prod" src="${esc(sm(pimg(mp)))}" alt="" loading="lazy">` : ''}<h3>${esc(LL(x))}</h3><p>${esc(N.isAr() ? (x.t_ar || x.t_en) : (x.t_en || x.t_ar))}</p></div>`; }).join('')}</div></div></section>
       <section class="sec" style="padding-top:0"><div class="wrap"><div class="sec__h"><div><span class="kick">${t('p.gradeSpec')}</span><h2 class="h2">${N.isAr() ? 'ورقة الفرز' : 'The grading sheet'}</h2></div></div>
-        <div class="specwrap"><table class="spec"><thead><tr><th>${N.isAr() ? 'الصنف' : 'Item'}</th><th>${t('p.grade')}</th><th>${t('p.origin')}</th><th>${t('p.season')}</th></tr></thead><tbody>
-        ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A')}</b></td><td>${esc(L(p, 'origin'))}</td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
+        <div class="specwrap"><table class="spec"><thead><tr><th>${N.isAr() ? 'الصنف' : 'Item'}</th><th>${t('p.grade')}</th><th>${t('p.season')}</th></tr></thead><tbody>
+        ${rows.map(p => `<tr><td><a class="nm" href="#/products/${esc(p.handle)}"><img class="prod" src="${esc(sm(pimg(p)))}" alt="" loading="lazy">${esc(title(p))}</a></td><td><b>${esc((p.grade || {}).label || 'A')}</b></td><td>${esc(L(p, 'season'))}</td></tr>`).join('')}</tbody></table></div></div></section>`;
   }
 
   /* ─────────────── journal / faq / policies ─────────────── */
@@ -445,7 +446,7 @@ window.FVS = (function () {
   function searchPaint(q) {
     q = q.trim().toLowerCase();
     const list = (q ? live().filter(p => (p.title_en + ' ' + p.title_ar + ' ' + (p.tags || []).join(' ') + ' ' + p.origin_en + ' ' + p.origin_ar).toLowerCase().indexOf(q) > -1) : inSeasonList()).slice(0, 7);
-    $('#sres').innerHTML = (list.map(p => `<a href="#/products/${esc(p.handle)}" data-mclose><img class="prod" src="${esc(sm(pimg(p)))}" alt=""><span style="flex:1"><b>${esc(title(p))}</b><br><span class="small muted">${esc(L(p, 'origin'))}</span></span><span class="num small">${money(N.minPrice(p))}</span></a>`).join('') || `<p class="muted">${t('m.noResults', { q: esc(q) })}</p>`) + (q ? `<a href="#/shop?q=${encodeURIComponent(q)}" data-mclose class="small" style="justify-content:center;font-weight:600">${t('c.viewAll')} →</a>` : '');
+    $('#sres').innerHTML = (list.map(p => `<a href="#/products/${esc(p.handle)}" data-mclose><img class="prod" src="${esc(sm(pimg(p)))}" alt=""><span style="flex:1"><b>${esc(title(p))}</b><br><span class="small muted">${esc(L(p, 'season'))}</span></span><span class="num small">${money(N.minPrice(p))}</span></a>`).join('') || `<p class="muted">${t('m.noResults', { q: esc(q) })}</p>`) + (q ? `<a href="#/shop?q=${encodeURIComponent(q)}" data-mclose class="small" style="justify-content:center;font-weight:600">${t('c.viewAll')} →</a>` : '');
     clearTimeout(sT); if (q) sT = setTimeout(() => { try { window.NZ_TRACK && NZ_TRACK.event('search', { q, n: list.length }); } catch (e) { } }, 900);
   }
   function maybePopup(name) {
@@ -599,7 +600,7 @@ window.FVS = (function () {
   function bind() {
     document.addEventListener('click', e => {
       const b = e.target.closest('button, a, [data-goto]'); if (!b) { if (e.target.id === 'scrim') { closeBag(); closeModal(); } if (e.target.id === 'modal') closeModal(); return; }
-      if (b.dataset.tab != null && b.closest('[data-tabs]')) { const bar = b.closest('[data-tabs]'), lim = +bar.dataset.tabs || 8, grid = bar.nextElementSibling; $$('button', bar).forEach(x => x.classList.toggle('on', x === b)); let n = 0; $$('.tcell', grid).forEach(c => { const ok = !b.dataset.tab || c.dataset.col === b.dataset.tab; c.hidden = !(ok && n < lim); if (ok) n++; }); return; }
+      if (b.dataset.tab != null && b.closest('[data-tabs]')) { const bar = b.closest('[data-tabs]'), lim = +bar.dataset.tabs || 8, grid = bar.nextElementSibling; $$('button', bar).forEach(x => x.classList.toggle('on', x === b)); let n = 0; $$('.tcell', grid).forEach(c => { const ok = !b.dataset.tab || c.dataset.col === b.dataset.tab || (b.dataset.tab === '__season' && c.dataset.s); c.hidden = !(ok && n < lim); if (ok) n++; }); return; }
       if (b.dataset.scroll) { e.preventDefault(); const el = document.getElementById(b.dataset.scroll); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
       if (b.hasAttribute('data-bag')) { e.preventDefault(); openBag(); return; }
       if (b.hasAttribute('data-bagclose')) { if (b.tagName === 'BUTTON') e.preventDefault(); closeBag(); return; }
